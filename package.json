@@ -1,0 +1,25 @@
+{
+  "name": "serverless-kms-grants",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": ">=8"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "checkFormat": "prettier --list-different '**/*.{js,jsx,ts,tsx,css,json md}' ",
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx,css,json,md}' "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "@graham42/prettier-config": "^1.2.0",
+    "prettier": "^1.14.3"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.347.0",
+    "lodash": "^4.17.11"
+  }
+}
