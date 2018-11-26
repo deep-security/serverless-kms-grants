@@ -9,7 +9,15 @@ The plugin will create an AWS KMS grant as part of the `serverless deploy`
 function, and revoke it as part of the `serverless remove` function. It can also
 be run in the command line.
 
-## Installation
+## Table of Contents
+
+* [Install](#install)
+* [Usage](#usage)
+* [Run Locally](#run-locally)
+* [Support](#support)
+* [Contribute](#contribute)
+
+## Install
 
 1. Add `serverless-kms-grants` plugin to your package.json:
    `npm install --save-dev serverless-kms-grants`
