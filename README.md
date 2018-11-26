@@ -3,11 +3,11 @@
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
 [![npm version](https://badge.fury.io/js/serverless-kms-grants.svg)](https://badge.fury.io/js/serverless-kms-grants)
 
-A plugin for the [Serverless Framework](https://serverless.com/) which will
-create AWS KMS grants, to grant a lambda function permission to use a KMS key.
-The plugin will create an AWS KMS grant as part of the `serverless deploy`
-function, and revoke it as part of the `serverless remove` function. It can also
-be run in the command line.
+A plugin for the [Serverless Framework](https://serverless.com/) which 
+creates AWS KMS grants for a Lambda function permission to use a KMS key.
+The plugin creates an AWS KMS grant as part of the `serverless deploy`
+function, and revokes it as part of the `serverless remove` function. You 
+can also run it from the command line.
 
 ## Table of Contents
 
