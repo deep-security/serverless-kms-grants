@@ -5,5 +5,5 @@ workflow "main" {
 
 action "lint" {
   uses = "docker://node:lts"
-  runs = "npm run checkFormat"
+  runs = "npm run ci:lint"
 }

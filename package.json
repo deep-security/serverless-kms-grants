@@ -9,13 +9,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "checkFormat": "prettier --list-different '**/*.{js,jsx,ts,tsx,css,json,md}' ",
-    "format": "prettier --write '**/*.{js,jsx,ts,tsx,css,json,md}' "
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx,css,json,md}' ",
+    "lint": "eslint .",
+    "ci:lint": "npm run lint && npm run checkFormat"
   },
   "keywords": [],
   "author": "",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
     "@graham42/prettier-config": "^1.2.0",
+    "eslint": "^5.15.1",
+    "eslint-config-prettier": "^4.1.0",
     "prettier": "^1.14.3"
   },
   "dependencies": {
