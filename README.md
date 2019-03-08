@@ -39,6 +39,8 @@ Configure the AWS KMS key id and lambdaArn for the plugin in serverless.yml:
 
 - kmsKeyId: the `KeyId`, `Alias`, or `Arn` used to identify the KMS key
   (**Required**)
+- lambdaRoleName: the name of the lambda role you wish to grant access to KMS key.
+  (Optional). If name is not specified the plugin will try with default role name.
 - lambdaRoleArn: the Arn of the lambda you wish to grant access to the KMS key
   (Optional). If an arn is not specified, the plugin will look for the default
   lambdaRole and obtain its arn. The default serverless lambda role follows the
