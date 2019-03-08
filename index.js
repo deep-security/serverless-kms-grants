@@ -40,12 +40,12 @@ class ServerlessKmsGrants {
     if (grantID === null) {
       this.serverless.cli.log("Creating KMS grant for " + lambdaArn);
       await this.kms
-          .createGrant({
-            KeyId: keyArn,
-            GranteePrincipal: lambdaArn,
-            Operations: ["Encrypt", "Decrypt"],
-          })
-          .promise();
+        .createGrant({
+          KeyId: keyArn,
+          GranteePrincipal: lambdaArn,
+          Operations: ["Encrypt", "Decrypt"],
+        })
+        .promise();
     } else {
       this.serverless.cli.log("KMS grant already exists for " + lambdaArn);
     }
@@ -99,13 +99,13 @@ class ServerlessKmsGrants {
     }
 
     let lambdaArn = _.get(
-        this.serverless.service,
-        "custom.kmsGrants.lambdaRoleArn",
+      this.serverless.service,
+      "custom.kmsGrants.lambdaRoleArn",
     );
 
     let lambdaRoleName = _.get(
-        this.serverless.service,
-        "custom.kmsGrants.lambdaRoleName",
+      this.serverless.service,
+      "custom.kmsGrants.lambdaRoleName",
     );
 
     if (lambdaRoleName) {
@@ -114,7 +114,7 @@ class ServerlessKmsGrants {
 
     if (!lambdaArn) {
       this.serverless.cli.log(
-          "Neither 'lambdaRoleArn' or 'lambdaRoleName' not defined, using default format for role name: <service>-<stage>-<region>-lambdaRole",
+        "Neither 'lambdaRoleArn' or 'lambdaRoleName' not defined, using default format for role name: <service>-<stage>-<region>-lambdaRole",
       );
       lambdaArn = await this.getLambdaArn();
     }
@@ -122,8 +122,8 @@ class ServerlessKmsGrants {
     const keyData = await this.kms.describeKey({ KeyId: keyId }).promise();
     const keyArn = keyData.KeyMetadata.Arn;
     const { Grants: grantsArray } = await this.kms
-        .listGrants({ KeyId: keyArn })
-        .promise();
+      .listGrants({ KeyId: keyArn })
+      .promise();
 
     for (let i = 0; i < grantsArray.length; i++) {
       if (grantsArray[i].GranteePrincipal === lambdaArn) {
