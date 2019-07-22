@@ -1,6 +1,6 @@
 {
   "name": "serverless-kms-grants",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "index.js",
   "engines": {
@@ -15,11 +15,11 @@
   "author": "",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
-    "@graham42/prettier-config": "^1.2.0",
-    "prettier": "^1.14.3"
+    "@graham42/prettier-config": "^1.3.2",
+    "prettier": "^1.18.2"
   },
   "dependencies": {
-    "aws-sdk": "^2.347.0",
-    "lodash": "^4.17.11"
+    "aws-sdk": "^2.496.0",
+    "lodash": "^4.17.15"
   }
 }
