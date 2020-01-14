@@ -24,7 +24,7 @@ class ServerlessKmsGrants {
     this.createGrant = this.createGrant.bind(this);
     this.revokeGrant = this.revokeGrant.bind(this);
     this.getLambdaRole = this.getLambdaRole.bind(this);
-    this.getLambdaArn = this.getLambdaArn.bind(this);
+    this.getRoleArn = this.getRoleArn.bind(this);
     this.findGrant = this.findGrant.bind(this);
 
     this.hooks = {
@@ -36,28 +36,50 @@ class ServerlessKmsGrants {
   }
 
   async createGrant() {
-    const [keyArn, lambdaArn, grantID] = await this.findGrant();
-    if (grantID === null) {
-      this.serverless.cli.log("Creating KMS grant for " + lambdaArn);
-      await this.kms
+    const grants = _.get(this.serverless.service, "custom.kmsGrants");
+
+    if (!grants) {
+      // Nothing to do - no grants/role key pairs
+      this.serverless.cli.log("Exiting, nothing to create grants for");
+      return;
+    }
+
+    for (var i = 0; i < grants.length; i++) {
+      const [keyArn, roleArn, grantID] = await this.findGrant(grants[i]);
+      if (grantID === null) {
+        this.serverless.cli.log("Creating KMS grant for " + roleArn);
+        await this.kms
           .createGrant({
             KeyId: keyArn,
-            GranteePrincipal: lambdaArn,
+            GranteePrincipal: roleArn,
             Operations: ["Encrypt", "Decrypt"],
           })
           .promise();
-    } else {
-      this.serverless.cli.log("KMS grant already exists for " + lambdaArn);
+      } else {
+        this.serverless.cli.log("KMS grant already exists for " + roleArn);
+      }
     }
   }
 
   async revokeGrant() {
-    const [keyArn, lambdaArn, grantID] = await this.findGrant();
-    if (grantID !== null) {
-      this.serverless.cli.log("Revoking KMS grant for " + lambdaArn);
-      await this.kms.revokeGrant({ KeyId: keyArn, GrantId: grantID }).promise();
-    } else {
-      this.serverless.cli.log("No KMS grant found for " + lambdaArn + ".");
+    const grants = _.get(this.serverless.service, "custom.kmsGrants");
+
+    if (!grants) {
+      // Nothing to do - no grants/role key pairs
+      this.serverless.cli.log("Exiting, nothing to revoke grants for");
+      return;
+    }
+
+    for (var i = 0; i < grants.length; i++) {
+      const [keyArn, roleArn, grantID] = await this.findGrant(grants[i]);
+      if (grantID !== null) {
+        this.serverless.cli.log("Revoking KMS grant for " + roleArn);
+        await this.kms
+          .revokeGrant({ KeyId: keyArn, GrantId: grantID })
+          .promise();
+      } else {
+        this.serverless.cli.log("No KMS grant found for " + roleArn + ".");
+      }
     }
   }
 
@@ -81,57 +103,53 @@ class ServerlessKmsGrants {
     return lambdaRole;
   }
 
-  async getLambdaArn(lambdaRoleName) {
-    let lambdaRole = lambdaRoleName || this.getLambdaRole();
+  async getRoleArn(roleName) {
+    let role = roleName || this.getLambdaRole();
     const iam = new aws.IAM({
       region: this.serverless.service.provider.region,
     });
-    const lambdaData = await iam.getRole({ RoleName: lambdaRole }).promise();
-    const lambdaArn = lambdaData.Role.Arn;
+    const roleData = await iam.getRole({ RoleName: role }).promise();
+    const roleArn = roleData.Role.Arn;
 
-    return lambdaArn;
+    return roleArn;
   }
 
-  async findGrant() {
-    const keyId = _.get(this.serverless.service, "custom.kmsGrants.kmsKeyId");
+  async findGrant(grant) {
+    const keyId = _.get(grant, "kmsKeyId");
     if (!keyId) {
       throw new Error("No kms key id given.");
     }
 
-    let lambdaArn = _.get(
-        this.serverless.service,
-        "custom.kmsGrants.lambdaRoleArn",
-    );
+    let roleArn = _.get(grant, "roleArn");
 
-    let lambdaRoleName = _.get(
-        this.serverless.service,
-        "custom.kmsGrants.lambdaRoleName",
-    );
+    let roleName = _.get(grant, "roleName");
 
-    if (lambdaRoleName) {
-      lambdaArn = await this.getLambdaArn(lambdaRoleName);
+    if (roleName) {
+      roleArn = await this.getRoleArn(roleName);
     }
 
-    if (!lambdaArn) {
+    if (!roleArn) {
       this.serverless.cli.log(
-          "Neither 'lambdaRoleArn' or 'lambdaRoleName' not defined, using default format for role name: <service>-<stage>-<region>-lambdaRole",
+        "Neither 'roleArn' or 'roleName' defined for grant " +
+          keyId +
+          ", using default format for role name: <service>-<stage>-<region>-lambdaRole",
       );
-      lambdaArn = await this.getLambdaArn();
+      roleArn = await this.getRoleArn();
     }
 
     const keyData = await this.kms.describeKey({ KeyId: keyId }).promise();
     const keyArn = keyData.KeyMetadata.Arn;
     const { Grants: grantsArray } = await this.kms
-        .listGrants({ KeyId: keyArn })
-        .promise();
+      .listGrants({ KeyId: keyArn })
+      .promise();
 
     for (let i = 0; i < grantsArray.length; i++) {
-      if (grantsArray[i].GranteePrincipal === lambdaArn) {
+      if (grantsArray[i].GranteePrincipal === roleArn) {
         const grantID = grantsArray[i].GrantId;
-        return [keyArn, lambdaArn, grantID];
+        return [keyArn, roleArn, grantID];
       }
     }
-    return [keyArn, lambdaArn, null];
+    return [keyArn, roleArn, null];
   }
 }
 
