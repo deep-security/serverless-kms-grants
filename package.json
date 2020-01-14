@@ -8,8 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "checkFormat": "prettier --list-different '**/*.{js,jsx,ts,tsx,css,json md}' ",
-    "format": "prettier --write '**/*.{js,jsx,ts,tsx,css,json,md}' "
+    "checkFormat": "prettier --list-different **/*.{js,jsx,ts,tsx,json,css,scss,less,md}",
+    "format": "prettier --write **/*.{js,jsx,ts,tsx,json,css,scss,less,md}"
   },
   "keywords": [],
   "author": "",
