@@ -6,7 +6,7 @@ class ServerlessKmsGrants {
   constructor(serverless, options) {
     this.serverless = serverless;
     this.options = options;
-    this.kms = new aws.KMS({ region: this.serverless.service.provider.region });
+    this.kms = null;
 
     this.commands = {
       createKmsGrant: {
@@ -36,6 +36,11 @@ class ServerlessKmsGrants {
   }
 
   async createGrant() {
+
+    if (!this.kms) {
+      this.kms = new aws.KMS({ region: this.serverless.service.provider.region });
+    }
+
     const grants = _.get(this.serverless.service, "custom.kmsGrants");
 
     if (!grants) {
@@ -62,6 +67,11 @@ class ServerlessKmsGrants {
   }
 
   async revokeGrant() {
+
+    if (!this.kms) {
+      this.kms = new aws.KMS({ region: this.serverless.service.provider.region });
+    }
+
     const grants = _.get(this.serverless.service, "custom.kmsGrants");
 
     if (!grants) {
